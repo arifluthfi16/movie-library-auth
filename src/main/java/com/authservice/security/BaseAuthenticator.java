@@ -37,7 +37,7 @@ public class BaseAuthenticator implements Authenticator<CredentialsDTO, User> {
         String secretKey = "aeftbEgdU5MQhmbv6Tim81uhC00L1BiaBIWidMr40k0=";
         long expirationTime = 86400000L; // 1 Day
         return Jwts.builder()
-                .setSubject(user.getUsername())
+                .claim("username", user.getUsername())
                 .claim("roles", user.getRole())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
