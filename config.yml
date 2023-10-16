@@ -1,0 +1,26 @@
+---
+logging:
+  level: INFO
+  loggers:
+    com.authservice: DEBUG
+database:
+  driverClass: org.postgresql.Driver
+  user: arifluthfi
+  password: 000123
+  url: jdbc:postgresql://localhost:5432/movie_library
+  properties:
+    charSet: UTF-8
+  maxWaitForConnection: 3s
+  validationQuery: "/* MyService Health Check */ SELECT 1"
+  validationQueryTimeout: 3s
+  minSize: 8
+  maxSize: 32
+  checkConnectionWhileIdle: false
+  evictionInterval: 10s
+  minIdleTime: 1 minute
+flyway:
+  baselineOnMigrate: true
+  validateOnMigrate: true
+  locations:
+  - filesystem:src/main/java/com/authservice/db/migration
+  baseLineVersion: 1
