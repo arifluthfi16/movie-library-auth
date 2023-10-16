@@ -1,6 +1,3 @@
-[submodule "db/migration"]
-	path = db/migration
-	url = https://github.com/arifluthfi16/movie-library-migration
 [submodule "src/main/java/com/authservice/db/migration"]
 	path = src/main/java/com/authservice/db/migration
 	url = https://github.com/arifluthfi16/movie-library-migration
