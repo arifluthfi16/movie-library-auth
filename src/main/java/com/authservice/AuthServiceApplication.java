@@ -48,8 +48,8 @@ public class AuthServiceApplication extends Application<AuthServiceConfiguration
         connectionFactory.setPassword(config.getRabbitMQConfiguration().getPassword());
 
         // Resource creation
-        MQConsumerResource consumerResource = new MQConsumerResource(connectionFactory, userDao);
         AuthResource authResource = new AuthResource(authenticator, userDao);
+        MQConsumerResource consumerResource = new MQConsumerResource(connectionFactory, userDao, authenticator);
 
         // Resource Registration
         environment.jersey().register(authResource);

@@ -2,6 +2,8 @@ package com.authservice.resources;
 
 import com.authservice.api.User;
 import com.authservice.db.dao.UserDao;
+import com.authservice.dto.UserResponseDTO;
+import com.authservice.security.BaseAuthenticator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rabbitmq.client.*;
@@ -13,12 +15,14 @@ import java.nio.charset.StandardCharsets;
 public class MQConsumerResource implements Managed {
     private final ConnectionFactory factory;
     private final UserDao userDao;
+    private final BaseAuthenticator baseAuthenticator;
     private final String consumerQueueName = "username_consumer";
     private final String publisherQueueName = "username_consumer_response";
 
-    public MQConsumerResource(ConnectionFactory factory, UserDao userDao) {
+    public MQConsumerResource(ConnectionFactory factory, UserDao userDao, BaseAuthenticator baseAuthenticator) {
         this.factory = factory;
         this.userDao = userDao;
+        this.baseAuthenticator = baseAuthenticator;
     }
 
     @Override
@@ -31,16 +35,18 @@ public class MQConsumerResource implements Managed {
         publisherChannel.queueDeclare(publisherQueueName, false, false, false, null);
 
         DeliverCallback deliverCallback = (consumerTag, delivery) -> {
-            String username = new String(delivery.getBody(), StandardCharsets.UTF_8);
+            String token = new String(delivery.getBody(), StandardCharsets.UTF_8).trim();
 
             AMQP.BasicProperties properties = delivery.getProperties();
             String correlationId = properties.getCorrelationId();
 
-            if (!username.isEmpty()) {
-                User user = userDao.findByUsername(username);
-                user.setPassword("");
+            if (!token.isEmpty()) {
+                if (token.startsWith("\"") && token.endsWith("\"")) token = token.substring(1, token.length() - 1);
+                User user = baseAuthenticator.getUserByToken(token);
                 String userJson = serializeUserToJson(user);
                 sendUserDataToResponseQueue(publisherChannel, userJson, correlationId);
+            } else {
+                sendUserDataToResponseQueue(publisherChannel, "", correlationId);
             }
         };
 
@@ -50,7 +56,7 @@ public class MQConsumerResource implements Managed {
     private String serializeUserToJson(User user) {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            return objectMapper.writeValueAsString(user);
+            return objectMapper.writeValueAsString(UserResponseDTO.fromUserEntity(user));
         } catch (JsonProcessingException e) {
             return null;
         }

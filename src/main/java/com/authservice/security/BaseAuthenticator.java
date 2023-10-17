@@ -5,6 +5,7 @@ import com.authservice.db.dao.UserDao;
 import com.authservice.dto.CredentialsDTO;
 import io.dropwizard.auth.AuthenticationException;
 import io.dropwizard.auth.Authenticator;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.mindrot.jbcrypt.BCrypt;
@@ -43,5 +44,25 @@ public class BaseAuthenticator implements Authenticator<CredentialsDTO, User> {
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
+    }
+
+    public User getUserByToken (String token) {
+        try {
+            Claims claims = Jwts.parser()
+                    .setSigningKey("aeftbEgdU5MQhmbv6Tim81uhC00L1BiaBIWidMr40k0=")
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+
+            String username = claims.get("username", String.class);
+            User user = null;
+            if (username != null && !username.isEmpty()) {
+                user = userDao.findByUsername(username);
+                user.setPassword("");
+            }
+            return user;
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

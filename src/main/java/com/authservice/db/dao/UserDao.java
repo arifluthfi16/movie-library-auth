@@ -12,6 +12,6 @@ public interface UserDao {
     @SqlQuery("SELECT * FROM users WHERE username = :username")
     User findByUsername(@Bind("username") String username);
 
-    @SqlUpdate("INSERT INTO users (username, password, role) VALUES (:user.username, :user.password, :user.role)")
+    @SqlUpdate("INSERT INTO users (username, password, role, country) VALUES (:user.username, :user.password, :user.role, :user.country)")
     void createUser(@BindBean("user") User user);
 }

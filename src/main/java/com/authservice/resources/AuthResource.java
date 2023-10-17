@@ -3,6 +3,7 @@ package com.authservice.resources;
 import com.authservice.api.User;
 import com.authservice.db.dao.UserDao;
 import com.authservice.dto.CredentialsDTO;
+import com.authservice.dto.UserResponseDTO;
 import com.authservice.response.ResponseWrapper;
 import com.authservice.security.BaseAuthenticator;
 import io.dropwizard.auth.Auth;
@@ -64,13 +65,13 @@ public class AuthResource {
         }
 
         String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt(12));
-        User newUser = new User(user.getUsername(), hashedPassword, user.getRole());
+        User newUser = new User(user.getUsername(), hashedPassword, user.getRole(), user.getCountry());
         userDao.createUser(newUser);
 
         user.setPassword("");
-        ResponseWrapper<User> responseWrapper = new ResponseWrapper<>();
+        ResponseWrapper<UserResponseDTO> responseWrapper = new ResponseWrapper<>();
         responseWrapper.setStatusType(Response.Status.CREATED);
-        responseWrapper.setData(user);
+        responseWrapper.setData(UserResponseDTO.fromUserEntity(user));
         responseWrapper.setMessage("User registered successfully");
 
         return responseWrapper.build();
@@ -81,23 +82,11 @@ public class AuthResource {
     public Response getCurrentUser(@HeaderParam("Authorization") String authorizationHeader) {
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             String token = authorizationHeader.substring("Bearer ".length()).trim();
-            ResponseWrapper<User> responseWrapper = new ResponseWrapper<>();
+            ResponseWrapper<UserResponseDTO> responseWrapper = new ResponseWrapper<>();
 
             try {
-                Claims claims = Jwts.parser()
-                        .setSigningKey("aeftbEgdU5MQhmbv6Tim81uhC00L1BiaBIWidMr40k0=")
-                        .build()
-                        .parseClaimsJws(token)
-                        .getBody();
-
-                String username = claims.getSubject();
-                User user = null;
-                if (username != null && !username.isEmpty()) {
-                    user = userDao.findByUsername(username);
-                    user.setPassword("");
-                }
-
-                responseWrapper.setData(user);
+                User user = baseAuthenticator.getUserByToken(token);
+                responseWrapper.setData(UserResponseDTO.fromUserEntity(user));
                 responseWrapper.setMessage("Retrieve succeed");
                 responseWrapper.setStatusType(Response.Status.OK);
 
@@ -119,8 +108,8 @@ public class AuthResource {
             return new ResponseWrapper<>(Response.Status.NOT_FOUND, "User not found",null).build();
         }
 
-        return new ResponseWrapper<>(
-                Response.Status.OK, "Successfully retrieved user data",user
+        return new ResponseWrapper<UserResponseDTO>(
+                Response.Status.OK, "Successfully retrieved user data", UserResponseDTO.fromUserEntity(user)
         ).build();
     }
 }

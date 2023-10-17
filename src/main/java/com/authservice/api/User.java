@@ -16,16 +16,19 @@ public class User implements Principal {
     private String username;
     private String password;
     private String role;
+    private String country;
 
     @JsonCreator
     public User(
             @JsonProperty("username") String username,
             @JsonProperty("password") String password,
-            @JsonProperty("role") String role
+            @JsonProperty("role") String role,
+            @JsonProperty("country") String country
     ) {
         this.username = username;
         this.password = password;
         this.role = role;
+        this.country = country;
     }
 
     @Override
