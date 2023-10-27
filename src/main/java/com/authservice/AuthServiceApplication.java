@@ -60,7 +60,6 @@ public class AuthServiceApplication extends Application<AuthServiceConfiguration
         Flyway flyway = Flyway.configure()
                 .driver("com.microsoft.sqlserver.jdbc.SQLServerDriver")
                 .dataSource(dataSourceFactory.getUrl(), dataSourceFactory.getUser(), dataSourceFactory.getPassword())
-                .locations("filesystem:src/main/java/com/authservice/db/migration")
                 .load();
         flyway.migrate();
     }

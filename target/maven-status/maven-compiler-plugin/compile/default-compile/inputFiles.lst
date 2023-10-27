@@ -1,0 +1,11 @@
+/Users/arifluthfi/MovieLibrary/auth-service/src/main/java/com/authservice/resources/AuthResource.java
+/Users/arifluthfi/MovieLibrary/auth-service/src/main/java/com/authservice/dto/RabbitMQConfigurationDTO.java
+/Users/arifluthfi/MovieLibrary/auth-service/src/main/java/com/authservice/dto/CredentialsDTO.java
+/Users/arifluthfi/MovieLibrary/auth-service/src/main/java/com/authservice/dto/UserResponseDTO.java
+/Users/arifluthfi/MovieLibrary/auth-service/src/main/java/com/authservice/db/dao/UserDao.java
+/Users/arifluthfi/MovieLibrary/auth-service/src/main/java/com/authservice/AuthServiceApplication.java
+/Users/arifluthfi/MovieLibrary/auth-service/src/main/java/com/authservice/security/BaseAuthenticator.java
+/Users/arifluthfi/MovieLibrary/auth-service/src/main/java/com/authservice/AuthServiceConfiguration.java
+/Users/arifluthfi/MovieLibrary/auth-service/src/main/java/com/authservice/api/User.java
+/Users/arifluthfi/MovieLibrary/auth-service/src/main/java/com/authservice/resources/MQConsumerResource.java
+/Users/arifluthfi/MovieLibrary/auth-service/src/main/java/com/authservice/response/ResponseWrapper.java
