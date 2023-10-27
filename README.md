@@ -17,3 +17,15 @@ Working With Submodule
 1. Clone the repo `git clone git@github.com:arifluthfi16/movie-library-migration.git`
 2. Run `git submodule update --init --recursive` on root dir to initialize the sub module
 3. You can pull the sub module while you are in the parent dir using `git pull --recurse-submodules`
+
+# Building The App
+
+1. Set version on
+    ```
+    <groupId>com.authservice</groupId>
+    <artifactId>auth-service</artifactId>
+    <version>1.0</version>
+    <packaging>jar</packaging>  
+    ```
+3. To build the service run `mvn package`
+4. To run the build `java -jar target/auth-service-1.0.jar server config.yml`
